@@ -1,0 +1,333 @@
+/**
+ * @author Oxana Beydilli (c) all rights reserved
+ * @title schemas for drawing svg elements
+ */
+jQuery(window).load(function () {
+  svgobject = document.getElementById('page1'); // Находим тег <object>
+  if ('contentDocument' in svgobject) {              
+  svgdom = jQuery(svgobject.contentDocument);  // Получаем доступ к объектной модели SVG-файла
+    // Сценарии для работы открытки
+  
+//1. залить холст градиентом при клике на кнопке						    						    		
+    $("#gradButton").click(function(){
+	  if (jQuery("#gradient",svgdom)) {
+	  jQuery("#gradient",svgdom).detach();
+      } 
+   
+	jQuery("#rectGrad", svgdom).attr("width",$("#page1").width());
+	jQuery("#rectGrad", svgdom).attr("height",$("#page1").height());
+/*
+* определение направления градиента
+*/
+var x1,y1,x2,y2;
+  if ($('input[name="direction"]:checked').val() == "vertic") {
+	x1 = x2 = y1 = "0%";
+	y2 = "100%";
+  } else if ($('input[name="direction"]:checked').val() == "horiz") {
+	x1 = y1 = y2 = "0%";
+	x2 = "100%";
+  } else {
+	x1 = y1 = "0%";
+	x2 = y2 = "100%";
+  }
+var gradient = document.createElementNS("http://www.w3.org/2000/svg","linearGradient");
+	jQuery(gradient,svgdom).attr("id","gradient");
+	jQuery(gradient,svgdom).attr("x1",x1);
+	jQuery(gradient,svgdom).attr("y1",y1);
+	jQuery(gradient,svgdom).attr("x2",x2);
+	jQuery(gradient,svgdom).attr("y2",y2);
+		  
+var stop1 = document.createElementNS("http://www.w3.org/2000/svg","stop");
+	jQuery(stop1,svgdom).attr("offset","0.3");
+	jQuery(stop1,svgdom).attr("stop-color",$("#color1 option:selected").val());
+	
+var stop2 = document.createElementNS("http://www.w3.org/2000/svg","stop");
+	jQuery(stop2,svgdom).attr("offset","0.7");
+	jQuery(stop2,svgdom).attr("stop-color",$("#color2 option:selected").val());
+	
+	jQuery(gradient,svgdom).append(stop1);
+	jQuery(gradient,svgdom).append(stop2);
+	
+	jQuery("#mydefs",svgdom).append(gradient);
+	
+    jQuery("#rectGrad", svgdom).attr("fill", "url(#gradient)");
+  	
+ });
+//рисование на холсте
+//функции прототипы и прочее
+/*
+ *Рисование элементов
+ */
+var pathData,elementToDraw,startX,startY,w,h,radius,maxradius,maxwidth,maxheight,clone;
+var Shape = function (){};
+
+Shape.prototype.createPath = function (pathName,x,y,color,fillColor,strokeWidth) {
+	
+	elementToDraw = document.createElementNS("http://www.w3.org/2000/svg",pathName);
+	
+	elementToDraw.setAttribute("stroke",color);
+	elementToDraw.setAttribute("fill",fillColor);
+	elementToDraw.setAttribute("stroke-width",strokeWidth);
+	
+	
+	if (pathName === "path"){
+		
+		pathData = "M" + x + " " + y + " L ";
+		elementToDraw.setAttribute("d",pathData);
+		elementToDraw.setAttribute("id","shape_path");
+		//this.movePath(pathName, x, y);
+		return false;
+	} 
+	if (pathName === "heart"){
+		startX = x;
+		startY = y;
+		elementToDraw.setAttribute("id","shape_heart");
+		elementToDraw = document.createElementNS("http://www.w3.org/2000/svg","path");
+		elementToDraw.setAttribute("stroke",color);
+		elementToDraw.setAttribute("fill",fillColor);
+		elementToDraw.setAttribute("stroke-width",strokeWidth);
+		 //this.movePath(pathName, x, y);
+
+ 	} 
+	if (pathName === "line"){
+		elementToDraw.setAttribute("x1",x);
+		elementToDraw.setAttribute("y1",y);
+	} 
+	if (pathName === "rect"){
+		startX = x;
+		startY = y;
+		elementToDraw.setAttribute("x",x);
+		elementToDraw.setAttribute("y",y);
+		elementToDraw.setAttribute("width","0");
+		elementToDraw.setAttribute("height","0");
+	} 
+	if (pathName === "circle"){
+		radius = 0;
+		startX = x;
+		startY = y;
+		elementToDraw.setAttribute("cx",x);
+		elementToDraw.setAttribute("cy",y);	
+		elementToDraw.setAttribute("r",radius);
+	}
+	
+
+	//document.getElementById("page1").appendChild(elementToDraw);
+};
+
+Shape.prototype.movePath = function (pathName,x,y){
+	
+	if (pathName === "path"){
+	  pathData += " "+ x + " " + y;
+	  elementToDraw.setAttribute("d", pathData);
+	  
+	}
+	if (pathName === "heart"){
+		pathData = "M90,63 C60,35 90,35 90,45 C 91,35 121,35 90,63 Z";
+		elementToDraw.setAttribute("d",pathData);
+		
+		elementToDraw.setAttribute("transform","translate("+(x-75*(x-startX)/10)+","+(y-40*(y-startY)/10)+") scale ("+(x-startX)/10+","+(y-startY)/10+")");
+		
+	}
+	if (pathName === "rect"){
+		 w = parseInt(x-startX);
+		 h = parseInt(y-startY);
+		 elementToDraw.setAttribute("width",w);
+		 elementToDraw.setAttribute("height",h);
+	}
+	if (pathName == "circle"){
+		radius = parseInt(Math.sqrt(Math.pow(x-startX,2)+Math.pow(y-startY,2)));
+		maxwidth = 480;
+		maxheight = 480;
+	    maxradius = Math.min(Math.min(x-startX,maxwidth-(x-startX)),Math.min(y-startY,maxheight-(y-startY)));
+		if(radius>maxradius)radius=maxradius;  
+		elementToDraw.setAttribute("r",radius);
+	}
+	if (pathName== "line"){
+		elementToDraw.setAttribute("x2",x);
+		elementToDraw.setAttribute("y2",y);
+	}
+	elementToDraw.setAttribute("name","shape");
+	jQuery("#svgcard",svgdom).append(elementToDraw);
+    return false;
+};
+Shape.prototype.endPath = function () {
+	mouseIsDown = "false";
+	return false;
+};
+
+////////////////////////////////////////
+var temp_shape;
+    $("#shapes").click(function(event) {
+	 
+	 temp_shape = new Shape();
+	 pathName = event.target.id;
+	 jQuery("#svgcard",svgdom).on("mouseover",function(e){this.style.cursor = "crosshair";});
+	 
+	  var child_nodes = $("#shapes").children();
+	  for (i=0;i<child_nodes.length;i++){
+		  child_nodes[i].style.setProperty("stroke","grey","");
+	  }
+	  event.target.style.setProperty("stroke","orange","");
+//отрисовка шейпов	  
+	  jQuery("#svgcard",svgdom).mousedown(function (e){
+	    if ($("[aria-controls = tabs-1]").attr("tabindex") == "0" && $("[aria-controls = svgPath]").attr("tabindex") == "0") {
+		    var evt = e ||window.event;
+			mouseIsDown = "true";
+			var offset = $(this).offset(),
+			         x = (e.pageX - offset.left),
+			         y = (e.pageY - offset.top);	    			   	    	    			  			   
+			temp_shape.createPath(
+					pathName,
+					x,
+					y,
+					$("#strokeColor option:selected").val(),
+					$("#fillColor option:selected").val(),
+					$("#spinner").val()
+					);
+			evt.preventDefault();
+			}
+			else jQuery("#svgcard",svgdom).on("mouseover",function(e){this.style.cursor = "default";});
+		
+		});
+	 jQuery("#svgcard",svgdom).mousemove(function (e){
+		  var evt = e ||window.event;
+			if (mouseIsDown === "true"){
+			  var offset = $(this).offset();
+			  var x = (e.pageX - offset.left);
+			  var y = (e.pageY - offset.top);
+			  temp_shape.movePath(pathName,x,y);
+		    } 
+			
+			evt.preventDefault();
+		  });	
+		  jQuery("#svgcard",svgdom).on("mouseup",function (e){
+		    var evt = e||window.event;
+			temp_shape.endPath();
+			evt.preventDefault();
+		  });	  
+ });
+ //удаление шейпов начиная с последнего 
+$("#deleteEl").on("click",function (){
+    if(jQuery("[name=shape]",svgdom)) {
+	   jQuery("[name=shape]",svgdom).filter(":last").remove();
+	} else return;
+  });
+   //подгрузка в фон изображения/удаление изображения из фона
+	    $("#fillPic").click(function () { 
+	    	var  tempSrc = document.getElementById("temp_img").src;
+	    	    	
+	    	jQuery("#imgFill", svgdom).attr("width","100%");
+	    	jQuery("#imgFill", svgdom).attr("height","100%");
+	    	var  imgSrc = tempSrc.replace("thumb_","");
+	    	
+	    	jQuery("#imgFill", svgdom).attr("xlink:href",imgSrc);
+	    	jQuery("#imgFill", svgdom).attr("href",imgSrc);
+	    	});
+	    $("#cancelPic").click(function () {
+	    	jQuery("#imgFill", svgdom).attr("xlink:href","none");
+	    	jQuery("#imgFill", svgdom).attr("width","0");
+	    	jQuery("#imgFill", svgdom).attr("height","0");
+	    });   
+    }	
+  //OOP text
+var Text = function (){};
+Text.prototype.addText =  function (textValue,color,textId,fontSize,fontFamily,y) {
+    var textNode = document.createElementNS("http://www.w3.org/2000/svg","text");
+	textNode.setAttribute("id",textId);
+	textNode.setAttribute("fill",color);
+	textNode.setAttribute("font-family",fontFamily);
+	textNode.setAttribute("font-size",fontSize);
+	textNode.setAttribute("x","20");
+	textNode.setAttribute("y",y);
+	
+	jQuery(textNode, svgdom).text(textValue);
+	jQuery("#svgcard", svgdom).append(textNode);
+	textNode.onmouseover = function(e){this.style.cursor = "move";};
+	//drag and drop функции
+	var mouseIsDown = false;
+    jQuery(textNode,svgdom).mousedown(function (e){
+		    var evt = e ||window.event;
+			mouseIsDown = "true";
+			var offset = $(this).offset(),
+			         x = (e.pageX - offset.left),
+			         y = (e.pageY - offset.top);	    			   	    	    			  			   
+        
+  			evt.preventDefault();
+			 });
+			 
+	jQuery("#svgcard",svgdom).mousemove(function (e){
+		  var evt = e ||window.event;
+			if (mouseIsDown === "true"){
+			  var offset = $(this).offset();
+			  var x = (e.pageX - offset.left);
+			  var y = (e.pageY - offset.top);
+			  jQuery(textNode, svgdom).attr({"x":x,"y":y});
+		    } 
+			
+			evt.preventDefault();
+		});
+	jQuery("#svgcard",svgdom).on("mouseup",function (e){
+		    var evt = e||window.event;
+			mouseIsDown = "false";
+			evt.preventDefault();
+			return false;
+			
+		});
+    }
+//перемещение элементов
+Text.prototype.moveText = function ( Pathname, x, y) {
+   var elementToMove = document.getElementById("Pathname");
+   elementToMove.setAttribute("x",x);
+   elementToMove.setAttribute("y",y);
+}
+  
+ //добавление текста
+  $("#addTextButton").on("click",function () {
+	var y = "60",
+	    text_arr = jQuery("text", svgdom);//количество элементов text на странице
+	        if (text_arr.length > 0) {
+	           var y = jQuery("text", svgdom).eq(text_arr.length - 1).attr("y")*1;
+	           y += 20;
+	        }
+	var tmpText = new Text();
+	tmpText.addText(
+	                $("#textToAdd").val(),
+				    $("#textColor").val(),
+				    "text"+(text_arr.length + 1),
+				    $("#fontSize").val(),
+				    $("#fontFamily").val(),
+				    y 
+				);
+ });
+//удаление последней строки
+$("#deleteLast").click(function () {
+  if (jQuery("text",svgdom)) {
+    jQuery("text",svgdom).filter(":last").remove();
+  } else return;}); 
+//удаление всего текста
+$("#deleteText").click(function () {
+  if (jQuery("text",svgdom)) {
+    jQuery("text",svgdom).remove();
+  } else return;
+});
+
+//конец сценария работы холста-открытки  
+});
+
+//сценарии работы миниредактора
+jQuery(window).load(function () {
+  svgobject2 = document.getElementById('page2'); // Находим тег <object>
+  if ('contentDocument' in svgobject2) {              
+  svgeditor = jQuery(svgobject2.contentDocument);
+  
+//добавление пользовательского изображения в миниредактор
+  $("#addToEditor").click(function (){
+  jQuery("#usrImg",svgeditor).attr("xlink:href","none");
+  jQuery("#usrImg",svgeditor).attr("xlink:href","http://localhost/svgkohana/public/images/tmp/tmp_.jpg");
+  
+  })
+  }  
+        
+})  
+  
+    
