@@ -45,7 +45,7 @@
   </tbody>
 </table>
 <span style="margin:25px" id='results'>____</span>
-<?php echo HTML::script('public/js/show.js') ;?>
+<script src='public/js/show.js'></script>
 <hr>
 <script type="text/javascript" src="js/sizeSlider.js"></script>
 <script src=public/js/jquery-1.11.2.min.js></script>
@@ -108,7 +108,8 @@
 	<div class="cardDesign">
 	  <div class="cardBlock">
 	    <div id="canvas" class="clearfix" >
-	    <object data="<?php echo URL::base();?>public/postcard.svg" type="image/svg+xml" id="page1" width="480" height="240"></object>
+	    <img src=public/postcard.svg onerror="this.onerror=null; this.src=public/postcard.svg" type="image/svg+xml" id="page1"
+ width="480" height="240">
 	    
 	    </div>
 	  </div>
@@ -224,7 +225,7 @@
               <button class="prev">&lt;&lt;</button>
               <button class="next">&gt;&gt;</button>
 			  
-              <div class="temp_img"><img id="temp_img" src="<?echo URL::base();?>/public/image/thumb_1.jpg" />
+              <div class="temp_img"><img id="temp_img" src="public/image/thumb_1.jpg" />
 			  <pre><input type="submit" id="fillPic" value="В фон"/><button id="cancelPic">Отменить</button></pre>
 			  </div>
 			  <script type="text/javascript"> $(".carousel").obSlider(); </script>
