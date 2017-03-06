@@ -1,16 +1,23 @@
 ﻿<!DOCTYPE>
 <html>
 <head>
-
-    <meta charset="UTF-8">
-    <title>Создай свою открытку</title>
-<link rel=stylesheet href='public/css/index.css' type="text/css" /></head>
+  <meta charset="UTF-8">
+  <title>Создай свою открытку</title>
+<link type="text/css" href="public/css/index.css" rel="stylesheet" /><script type="text/javascript" src="public/js/jquery-1.11.2.min.js"></script><script type="text/javascript" src="/mydomain/public/js/jquery-ui.min.js"></script><script type="text/javascript" src="/mydomain/public/js/sizeSlider.js"></script><script type="text/javascript" src="/mydomain/public/js/jquery.obSlider.js"></script><script type="text/javascript" src="/mydomain/public/js/jquery.colorPicker.js"></script><script type="text/javascript" src="/mydomain/public/js/myQuery.js"></script><script type="text/javascript" src="/mydomain/public/js/toolMenu.js"></script><script type="text/javascript" src="/mydomain/public/js/svgSchema.js"></script>	<link type="text/css" href="/mydomain/public/css/styles.css" rel="stylesheet" /><link type="text/css" href="/mydomain/public/css/jquery-ui.css" rel="stylesheet" /><link type="text/css" href="/mydomain/public/css/reset.css" rel="stylesheet" /><link type="text/css" href="/mydomain/public/css/colorPicker.css" rel="stylesheet" /><link type="text/css" href="/mydomain/public/start/jquery-ui.css" rel="stylesheet" /><script>
+function end(){
+var t=document.getElementById('status');
+t.innerHTML='';
+t.innerHTML='Загрузка завершена,можете рисовать!';
+}
+</script>
+</head>
 <body>
 <div id=ob>
-<div id=wraper>
-<div id=header style='background-color:#00ff00;'>
-<img src='public/image/soln.png' alt='солнышко' align='left'/>
-<p class=zag style="padding-top:20pt">Поздравьте  открыткой счастья!</p>
+<div class=wraper>
+<div class=status>Идет загрузка...</div>
+<div class=header>
+<img src="public/image/soln.png" width="200" alt="солнышко" align="left" /><p class=zag style="padding-top:30pt;text-align: center;">Поздравьте  открыткой счастья!</p>
+
 </div>
  
 
@@ -18,7 +25,6 @@
 <table style="text-align: left; width: 100%;" border="0" cellpadding="2" cellspacing="2">
   <tbody>
     <tr>
-	<div style="margin:25px">Что дает регистрация</div>
       <td style="vertical-align: top;"><span style="text-decoration: underline;" class=mk-1>Войти</span><br>
       </td>
       <td style="vertical-align: top;"><a href="#" class="dot" onclick="otkr()">зарегистрироваться</a><span clss="mk-1">.</span><br><br><br>
@@ -26,7 +32,7 @@
     </tr>
     <tr>
       <td style="vertical-align: top;">
-      <form id="forma1"  method="post" action='javascript:void(null)' onsubmit="call('#forma1','voiti')" ><input type=text id='name_a' name="name_a" placeholder="Имя"><br><br>
+      <form id="forma1"  method="post" action='javascript:void(null)' onsubmit="call('#forma1','welcome/voiti')" ><input type=text id='name_a' name="name_a" placeholder="Имя"><br><br>
         <input type=text id='name_b'  name="name_b" placeholder="Пароль"><br><br>
 	<input type="submit" class="btn btn-primary btn-large" value='Войти'>
         </form>
@@ -34,7 +40,7 @@
       </td>
       <td style="vertical-align: top;">
       <div id="f1" style="display: none;">
-      <form id=forma2   action='javascript:void(null)' onsubmit="call('#forma2','zareg')" >
+      <form id=forma2   action='javascript:void(null)' onsubmit="call('#forma2','welcome/zareg')" >
 	<input type="text" id="name_c" name="name_c" placeholder="Имя"><br><br>
         <input type="text" id="name_d" name="name_d" placeholder="Пароль"><br><br>
         <input type="submit" class="btn btn-primary btn-large btn-succes" value='Зарегистрироватся'></form>
@@ -44,26 +50,12 @@
     </tr>
   </tbody>
 </table>
-<span style="margin:25px" id='results'>____</span>
-<script src='public/js/show.js'></script>
-<hr>
-<script type="text/javascript" src="js/sizeSlider.js"></script>
-<script src=public/js/jquery-1.11.2.min.js></script>
-<script src=       public/js/jquery-ui.min.js></script>
-<script src=      public/js/sizeSlider.js></script>
-<script src=    public/js/jquery.obSlider.js></script>
-<script src=        public/js/jquery.colorPicker.js></script>
-<script src=    public/js/myQuery.js></script>
-<script src=        public/js/toolMenu.js></script>
-<script src=    public/js/svgSchema.js></script>
+<span style="margin:25px" id='results'>Зарегистрируйтесь,чтобы сохранить открытку или отправить по email</span>
+<script type="text/javascript" src="/public/js/show.js"></script><hr>
 
-<script src=public/css/styles.css></script>
-<script src= public/css/jquery-ui.css></script>
-<script src=       public/css/reset.css></script>
-<script src=public/css/colorPicker.css></script>
-<script src=public/start/jquery-ui.css></script>
-
-	<script>
+   
+	
+      	<script>
 	function call(obj,act) {
       var msg = $(obj).serialize();
         $.ajax({
@@ -108,8 +100,7 @@
 	<div class="cardDesign">
 	  <div class="cardBlock">
 	    <div id="canvas" class="clearfix" >
-<!--	    <img src=public/postcard.svg  type="image/svg+xml" id="page1" !-->
-<object type="image/svg+xml" data='public/postcard.svg' id="page1"></object>
+	    <object data="public/postcard.svg" type="image/svg+xml" id="page1" width="480" height="240"></object>
 	    
 	    </div>
 	  </div>
@@ -210,15 +201,15 @@
 		    <div class="carousel">
                <ul class="carousel_ul">
                   
-                 <li><?php echo HTML::image('public/image/thumb_1.jpg',array('alt'=>'1')) ;?> </li>
-                 <li><?php echo HTML::image('public/image/thumb_2.jpg',array('alt'=>'2')) ;?></li>
-                 <li><?php echo HTML::image('public/image/thumb_3.jpg',array('alt'=>'3')) ;?></li>
-                 <li><?php echo HTML::image('public/image/thumb_4.jpg',array('alt'=>'4')) ;?></li>
-                 <li><?php echo HTML::image('public/image/thumb_5.jpg',array('alt'=>'5')) ;?></li>
-                 <li><?php echo HTML::image('public/image/thumb_6.jpg',array('alt'=>'6')) ;?></li>
-                 <li><?php echo HTML::image('public/image/thumb_7.jpg',array('alt'=>'7')) ;?></li>
-                 <li><?php echo HTML::image('public/image/thumb_8.jpg',array('alt'=>'8')) ;?></li>
-                 <li><?php echo HTML::image('public/image/thumb_9.jpg',array('alt'=>'9')) ;?></li>
+                 <li><img src="public/image/thumb_1.jpg" alt="1" /> </li>
+                 <li><img src="public/image/thumb_2.jpg" alt="2" /></li>
+                 <li><img src="public/image/thumb_3.jpg" alt="3" /></li>
+                 <li><img src="public/image/thumb_4.jpg" alt="4" /></li>
+                 <li><img src="public/image/thumb_5.jpg" alt="5" /></li>
+                 <li><img src="public/image/thumb_6.jpg" alt="6" /></li>
+                 <li><img src="public/image/thumb_7.jpg" alt="7" /></li>
+                 <li><img src="public/image/thumb_8.jpg" alt="8" /></li>
+                 <li><img src="public/image/thumb_9.jpg" alt="9" /></li>
                 
                </ul>
          
@@ -275,5 +266,6 @@
 <script type="text/javascript" src="js/sizeSlider.js"></script>
  </div>
 </div>
+<script>end();</script>
 </body>
 </html>
